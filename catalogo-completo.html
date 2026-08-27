@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Oxsy Verão 2027 - Completo</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; background:#111; overflow:hidden; }
+  #viewer {
+    position:relative;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+  }
+  .page {
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
+    background-color:#fff;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .35s ease;
+  }
+  .page.active {
+    opacity:1;
+    visibility:visible;
+    z-index:2;
+  }
+  .nav-zone {
+    position:absolute;
+    top:0;
+    height:100%;
+    width:20%;
+    z-index:10;
+    cursor:pointer;
+  }
+  .nav-zone.left { left:0; }
+  .nav-zone.right { right:0; }
+  .arrow {
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:44px; height:44px;
+    border-radius:50%;
+    background:rgba(0,0,0,0.35);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    z-index:11;
+    user-select:none;
+    transition:background .2s;
+  }
+  .arrow:hover { background:rgba(0,0,0,0.6); }
+  .arrow.prev { left:16px; }
+  .arrow.next { right:16px; }
+  .counter {
+    position:absolute;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    background:rgba(0,0,0,0.45);
+    color:#fff;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:13px;
+    padding:6px 14px;
+    border-radius:20px;
+    z-index:11;
+    letter-spacing:0.5px;
+  }
+  .progress {
+    position:absolute;
+    top:0; left:0;
+    height:3px;
+    background:#fff;
+    z-index:12;
+    transition:width .3s ease;
+  }
+</style>
+</head>
+<body>
+
+<div id="viewer">
+  <div class="arrow prev" id="prevBtn">&#10094;</div>
+  <div class="arrow next" id="nextBtn">&#10095;</div>
+  <div class="nav-zone left" id="leftZone"></div>
+  <div class="nav-zone right" id="rightZone"></div>
+  <div class="counter" id="counter">1 / 1</div>
+  <div class="progress" id="progress"></div>
+</div>
+
+<script>
+  const images = [
+    "images/pg001.png",
+    "images/pg002.png",
+    "images/pg003.jpg",
+    "images/pg004.jpg",
+    "images/pg005.jpg",
+    "images/pg006.jpg",
+    "images/pg007.jpg",
+    "images/pg008.jpg",
+    "images/pg009.jpg",
+    "images/pg010.jpg",
+    "images/pg011.jpg",
+    "images/pg012.jpg",
+    "images/pg013.jpg",
+    "images/pg014.jpg",
+    "images/pg015.jpg",
+    "images/pg016.jpg",
+    "images/pg017.jpg",
+    "images/pg018.jpg",
+    "images/pg019.jpg",
+    "images/pg020.jpg",
+    "images/pg021.jpg",
+    "images/pg022.jpg",
+    "images/pg023.png",
+    "images/pg024.jpg",
+    "images/pg025.jpg",
+    "images/pg026.jpg",
+    "images/pg027.jpg",
+    "images/pg028.jpg",
+    "images/pg029.png",
+    "images/pg030.jpg",
+    "images/pg031.jpg",
+    "images/pg032.jpg",
+    "images/pg033.png",
+    "images/pg034.jpg",
+    "images/pg035.jpg",
+    "images/pg036.jpg",
+    "images/pg037.png",
+    "images/pg038.jpg",
+    "images/pg039.jpg",
+    "images/pg040.jpg",
+    "images/pg041.png",
+    "images/pg042.jpg",
+    "images/pg043.png",
+    "images/pg044.png",
+    "images/pg045.png",
+    "images/pg046.jpg",
+    "images/pg047.png",
+    "images/pg048.jpg",
+    "images/pg049.png",
+    "images/pg050.png",
+    "images/pg051.jpg",
+    "images/pg052.png",
+    "images/pg053.png",
+    "images/pg054.png",
+    "images/pg055.png",
+    "images/pg056.png",
+    "images/pg057.jpg",
+    "images/pg058.jpg",
+    "images/pg059.png",
+    "images/pg060.jpg",
+    "images/pg061.png",
+    "images/pg062.png",
+    "images/pg063.jpg",
+    "images/pg064.jpg",
+    "images/pg065.png",
+    "images/pg066.jpg",
+    "images/pg067.png",
+    "images/pg068.png",
+    "images/pg069.png"
+  ];
+
+  const viewer = document.getElementById('viewer');
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  images.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className = 'page';
+    div.style.backgroundImage = `url('${src}')`;
+    div.dataset.index = i;
+    viewer.insertBefore(div, document.getElementById('leftZone'));
+  });
+
+  const pages = document.querySelectorAll('.page');
+
+  function goTo(index) {
+    if (index < 0) index = 0;
+    if (index >= images.length) index = images.length - 1;
+    pages.forEach(p => p.classList.remove('active'));
+    pages[index].classList.add('active');
+    current = index;
+    counter.textContent = `${current + 1} / ${images.length}`;
+    progress.style.width = `${((current + 1) / images.length) * 100}%`;
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('leftZone').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('rightZone').addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+  });
+
+  let touchStartX = 0;
+  viewer.addEventListener('touchstart', (e) => touchStartX = e.touches[0].clientX);
+  viewer.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (diff > 50) goTo(current - 1);
+    if (diff < -50) goTo(current + 1);
+  });
+
+  goTo(0);
+</script>
+</body>
+</html>
