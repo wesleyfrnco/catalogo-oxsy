@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabela de Preços - Oxsy Verão 2027</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, 'Segoe UI', Arial, sans-serif; }
+  body { background:#f4f1ec; color:#2b2b2b; padding:24px 16px 60px; }
+  .wrap { max-width:1000px; margin:0 auto; }
+  h1 { font-size:1.4rem; margin-bottom:4px; }
+  .sub { color:#7a7268; font-size:0.9rem; margin-bottom:20px; }
+  #search {
+    width:100%;
+    padding:14px 16px;
+    font-size:1rem;
+    border:1px solid #d8d0c4;
+    border-radius:10px;
+    margin-bottom:18px;
+    background:#fff;
+  }
+  #search:focus { outline:2px solid #a9846b; }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+  thead th {
+    text-align:left;
+    background:#2b2b2b;
+    color:#f4f1ec;
+    padding:12px 10px;
+    font-size:0.78rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    cursor:pointer;
+    user-select:none;
+    white-space:nowrap;
+  }
+  thead th:hover { background:#3d3d3d; }
+  tbody td { padding:11px 10px; border-bottom:1px solid #eee6da; font-size:0.9rem; vertical-align:top; }
+  tbody tr:hover { background:#faf7f1; }
+  .ref { font-weight:700; color:#a9532e; white-space:nowrap; }
+  .price { white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .base { font-weight:600; }
+  .plus20 { color:#7a5230; }
+  .plus100 { color:#2e6b4f; font-weight:600; }
+  #count { font-size:0.82rem; color:#7a7268; margin-bottom:10px; }
+  .empty { text-align:center; padding:30px; color:#999; }
+  @media (max-width:640px) {
+    thead th, tbody td { padding:8px 6px; font-size:0.8rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Tabela de Preços — Oxsy Verão 2027</h1>
+  <div class="sub">Busque por referência ou nome do produto. Clique nos cabeçalhos para ordenar.</div>
+  <input type="text" id="search" placeholder="Digite a referência (ex: F1004) ou o nome da peça...">
+  <div id="count"></div>
+  <table>
+    <thead>
+      <tr>
+        <th data-key="ref">Referência</th>
+        <th data-key="name">Produto</th>
+        <th data-key="base">Preço Base</th>
+        <th data-key="p20">+20%</th>
+        <th data-key="p100">Dobro (+100%)</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<script>
+const data = [
+  ["F1001","Saia Point básica",132.90],
+  ["F1002","Shorts Point com efeito plissê",147.20],
+  ["F1003","Saia plissada Point",168.90],
+  ["F1004","Calça flare Blend",163.70],
+  ["F1005","Shorts Blend shape",70.10],
+  ["F1006","Legging Breath com design cut",134.20],
+  ["F1007","Shorts Breath com design cut",79.90],
+  ["F1008","Shorts Breath com design leve e bolsos",124.60],
+  ["F1009","Calça Breath",123.50],
+  ["F1010","Shorts Breath",65.90],
+  ["F1011","Legging Lumina com bolso",147.90],
+  ["F1012","Shorts Lumina com bolso",87.40],
+  ["F1013","Bermuda Pace com bolsos laterais",114.20],
+  ["F1014","Legging Pace com 3 bolsos",161.90],
+  ["F1015","Calça flare Aura sense e detalhe V",205.00],
+  ["F1016","Shorts Aura sense",80.90],
+  ["F1017","Legging Seamless Sculp bumbum anatômico",101.90],
+  ["F1018","Shorts Seamless Sculp bumbum anatômico",80.90],
+  ["F1019","Calça flare Seamless Pro",148.10],
+  ["F1020","Legging Seamless Pro",103.90],
+  ["F1021","Shorts Seamless Pro",57.70],
+  ["F1022","Legging Seamless Line",84.90],
+  ["F1023","Shorts Seamless Line",51.90],
+  ["F2000","Top Point com gola polo",103.90],
+  ["F2001","Frente única Point com contraste",89.70],
+  ["F2002","Top lift Blend",54.90],
+  ["F2003","Top Blend com decote halter",92.50],
+  ["F2004","Top lift Breath",50.90],
+  ["F2005","Top lift Breath com decote arredondado",58.90],
+  ["F2006","Top Breath com design crossback",78.90],
+  ["F2007","Top Lumina com design vazado",79.90],
+  ["F2008","Top Lumina com design crossback",89.40],
+  ["F2009","Top Pace com bojo strong soft",108.50],
+  ["F2010","Top Aura sense com design crossback",86.80],
+  ["F2011","Top Seamless Pro",55.90],
+  ["F2012","Regata Seamless Pro",69.90],
+  ["F2013","Top Seamless Line design crossback",54.90],
+  ["F2014","Regata Polo Point com contraste",107.80],
+  ["F2015","Camiseta longa Breath",77.90],
+  ["F2016","Regata longa Breath",63.90],
+  ["F2017","Regata cropped Breath",48.90],
+  ["F2018","Regata Aura sense com design clean",122.90],
+  ["F2019","Regata Seamless Sculp",111.90],
+  ["F3000","Vestido Point com design crossback",126.20],
+  ["F3001","Macaquinho Breath com design crossback",148.90],
+  ["F3002","Macacão Breath com decote arredondado",190.60],
+  ["F3003","Macaquinho Lumina com decote arredondado",143.90],
+  ["F3004","Macacão Lumina com costas vazadas",203.70],
+  ["F3005","Macacão Seamless Pro design V com zíper",97.90],
+  ["FA002","Faixa de cabelo",10.90],
+  ["ME001","Meia de microfibra Pace curta",26.90],
+  ["ME002","Meia de microfibra Pace longa",29.30],
+  ["ME003","Meia de algodão Line longa",26.90],
+  ["PRE01","Presilha de cabelo",18.30]
+];
+
+const tbody = document.getElementById('tbody');
+const searchInput = document.getElementById('search');
+const countEl = document.getElementById('count');
+const fmt = v => v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+let sortKey = 'ref';
+let sortAsc = true;
+
+function render() {
+  const q = searchInput.value.trim().toLowerCase();
+  let rows = data.map(([ref, name, base]) => ({
+    ref, name, base,
+    p20: base * 1.2,
+    p100: base * 2
+  }));
+
+  if (q) {
+    rows = rows.filter(r => r.ref.toLowerCase().includes(q) || r.name.toLowerCase().includes(q));
+  }
+
+  rows.sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if (av < bv) return sortAsc ? -1 : 1;
+    if (av > bv) return sortAsc ? 1 : -1;
+    return 0;
+  });
+
+  countEl.textContent = `${rows.length} peça${rows.length === 1 ? '' : 's'} encontrada${rows.length === 1 ? '' : 's'}`;
+
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhuma peça encontrada</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td class="ref">${r.ref}</td>
+      <td>${r.name}</td>
+      <td class="price base">R$ ${fmt(r.base)}</td>
+      <td class="price plus20">R$ ${fmt(r.p20)}</td>
+      <td class="price plus100">R$ ${fmt(r.p100)}</td>
+    </tr>
+  `).join('');
+}
+
+searchInput.addEventListener('input', render);
+
+document.querySelectorAll('thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (sortKey === key) { sortAsc = !sortAsc; } else { sortKey = key; sortAsc = true; }
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
